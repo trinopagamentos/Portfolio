@@ -261,11 +261,18 @@
             gap: 12px;
             transition: transform 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
+            text-align: left;
+            border: 1px solid var(--border);
         }
 
         .item-grid .card:hover {
             transform: translateY(-4px);
             border-color: rgba(45,228,119,0.5);
+        }
+
+        .item-grid .card:focus-visible {
+            outline: 2px solid rgba(45, 228, 119, 0.7);
+            outline-offset: 2px;
         }
 
         .thumb {
@@ -389,6 +396,78 @@
             main {
                 padding-left: 15px;
                 padding-right: 15px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero .card {
+                order: -1;
+            }
+
+            .legend {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 20px 0 0;
+            }
+
+            header {
+                gap: 12px;
+            }
+
+            .brand img {
+                height: 38px;
+            }
+
+            .badge {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            h1 {
+                font-size: clamp(1.7rem, 6vw, 2.4rem);
+            }
+
+            .lead {
+                font-size: 0.95rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .item-grid .card {
+                padding: 14px;
+                gap: 10px;
+            }
+
+            .thumb {
+                aspect-ratio: 16 / 10;
+            }
+
+            .modal-dialog {
+                margin: 12px;
+            }
+
+            .modal-content {
+                border-radius: 16px;
+            }
+
+            .carousel-item img {
+                max-height: 360px;
+            }
+        }
+
+        @media (hover: none) {
+            .item-grid .card:hover {
+                transform: none;
             }
         }
     </style>
