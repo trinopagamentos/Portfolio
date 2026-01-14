@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio de Materiais | Trino Pagamentos</title>
+    <meta name="description" content="Landing page de referência do portfólio de materiais da Trino Pagamentos para implantação e credenciamento em campo.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="bootstrap-version" content="5.3.3">
+    <link href="assets/css/footer.css" rel="stylesheet" type="text/css">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <meta property="og:title" content="Portfólio de Materiais | Trino Pagamentos">
+    <meta property="og:description" content="Lista visual dos materiais usados pelo time comercial da Trino para implantação e credenciamento.">
+    <meta property="og:url" content="https://trinopagamentos.com/portfolio-materiais">
+    <meta property="og:image" content="https://trinopagamentos.com/assets/img/icone-redes.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Portal de Dados Abertos | Trino Pagamentos">
+    <meta name="twitter:description" content="Transparência e dados públicos da Trino Pagamentos.">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XQ10NGRKT5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XQ10NGRKT5');
+    </script>
+    <style>
+        :root {
+            --bg: #080c11;
+            --card: #0f1620;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e7edf3;
+            --muted: #9fb2c8;
+            --accent: #2de477;
+            --accent-strong: #1ec063;
+            --shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(45,228,119,0.08), transparent 30%), radial-gradient(circle at 80% 0%, rgba(45,228,119,0.08), transparent 30%), var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 32px 0 0;
+        }
+
+        header {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        .brand img {height: 44px; width: auto;}
+
+        main {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(45, 228, 119, 0.12);
+            border: 1px solid rgba(45, 228, 119, 0.2);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.1;
+            margin-bottom: 12px;
+        }
+
+        .lead {
+            color: var(--muted);
+            max-width: 720px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .section {margin-top: 32px;}
+
+        .section h2 {font-size: 1.6rem; margin-bottom: 12px;}
+
+        .section p {color: var(--muted); line-height: 1.6;}
+
+        a {
+            color: var(--muted);
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: var(--text);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 16px;
+            background: radial-gradient(circle at 30% 30%, rgba(45,228,119,0.08), transparent 40%);
+            opacity: 0.8;
+        }
+
+        .card h3 {font-size: 1.2rem; margin-bottom: 8px; color: #fff;}
+
+        .card p,
+        .card li {
+            color: var(--muted);
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .card ul {margin-top: 8px; padding-left: 18px;}
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.95rem;
+        }
+
+        .info-table th,
+        .info-table td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-table th {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .info-table td {
+            color: var(--muted);
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(45,228,119,0.15);
+            border: 1px solid rgba(45,228,119,0.3);
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 12px;
+        }
+
+        footer {margin-top: 50px;}
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .hero .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hero-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .item-grid .card {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .item-grid .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(45,228,119,0.5);
+        }
+
+        .thumb {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            border-radius: 12px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(45,228,119,0.12), rgba(255,255,255,0.04));
+            border: 1px solid var(--border);
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .thumb-placeholder {
+            display: grid;
+            place-items: center;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, rgba(45,228,119,0.08), rgba(255,255,255,0.03));
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.ok {background: var(--accent);}
+        .dot.soon {background: #f3c751;}
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .legend span {
+            color: var(--muted);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .modal-title h3 {margin: 0;}
+
+        .carousel-item img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #0b1119;
+            max-height: 520px;
+        }
+
+        .carousel-indicators [data-bs-target] {
+            background-color: var(--accent);
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .eyebrow {
+            color: var(--muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {color: var(--muted);}
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            header,
+            main {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="brand" href="https://trinopagamentos.com" title="Trino Pagamentos">
+            <img src="./assets/img/logo-trino-verde.svg" alt="Trino Pagamentos">
+        </a>
+        <span class="pill">Portfólio de Materiais</span>
+    </header>
+
+    <main>
+        <section class="hero section">
+            <div>
+                <div class="badge">Implantação e credenciamento</div>
+                <h1>LP do portfólio de materiais Trino</h1>
+                <p class="lead">Use esta página como referência rápida para treinar o time comercial e planejar a implantação do ecossistema Trino nos municípios. Cada item abre em modal com galeria quando houver mais de uma foto.</p>
+                <div class="hero-list">
+                    <div class="chip">Clique em qualquer card para ver detalhes</div>
+                    <div class="chip">Itens com foto e itens “foto em breve”</div>
+                    <div class="chip">Galeria em carrossel quando houver +1 imagem</div>
+                </div>
+            </div>
+                <div class="card">
+                <h3>Checklist de uso em campo</h3>
+                <p class="section-subtitle">Monte a rede credenciada com todos os materiais de PDV e apoio.</p>
+                <div class="info-grid">
+                    <div class="pill">Ambientação do comércio</div>
+                    <div class="pill">Material de divulgação</div>
+                    <div class="pill">Brindes e relacionamento</div>
+                    <div class="pill">Operação de cadastro e ativação</div>
+                </div>
+                <p class="section-subtitle" style="margin-top:10px;">Dica: antes da visita, verifique estoque e logística dos itens sem foto.</p>
+            </div>
+        </section>
+
+        <section class="section" id="portfolio">
+            <h2>Itens disponíveis</h2>
+            <p class="section-subtitle">Lista completa do kit de implantação Trino. Fotos marcadas como “em breve” serão incluídas assim que o registro estiver disponível.</p>
+            <div class="legend">
+                <span><span class="dot ok"></span>Com foto</span>
+                <span><span class="dot soon"></span>Foto em breve</span>
+                <span class="chip">Clique para abrir a modal</span>
+            </div>
+            <div class="grid item-grid" id="itemsGrid" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-2">
+                    <a href="https://trinopagamentos.com" title="Trino Pagamentos">
+                        <img class="logo" alt="Trino" src="./assets/img/logo-trino-branco.svg">
+                    </a>
+                </div>
+                <div class="col-12 col-lg-3 nav-footer">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://trinopagamentos.com/#como-funciona" title="Como funciona">Como funciona</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://trinopagamentos.com/#solucoes" title="Soluções">Soluções</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://trinopagamentos.com/#quem-somos" title="Quem somos">Quem somos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://trinopagamentos.com/#faca-parte" title="Faça parte">Faça parte</a>
+                        </li>
+                        <li class="nav-item">
+                            <a target="_blank" class="nav-link" href="https://blog.trinopagamentos.com" title="Blog">Blog</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-lg-5 nav-footer">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a class="nav-link thin" href="https://compliance.trinopagamentos.com/" title="Compliance e Regulatório">Compliance e Regulatório</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link thin" href="https://ajuda.trinopagamentos.com/" title="Central de Ajuda">Central de Ajuda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link thin" href="https://dadosabertos.trinopagamentos.com/" title="Dados Abertos">Dados Abertos</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-lg-2 nav-footer">
+                    <ul class="nav-list">
+                        <li class="nav-item redes">
+                            <a class="nav-link" href="https://www.instagram.com/trinopagamentos" title="Instagram da Trino Pagamentos"
+                                target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48px" height="48px">
+                                    <path fill="#FFFFFF"
+                                        d="M 31.820312 12 C 13.439312 12 12 13.439312 12 31.820312 L 12 32.179688 C 12 50.560688 13.439312 52 31.820312 52 L 32.179688 52 C 50.560688 52 52 50.560688 52 32.179688 L 52 32 C 52 13.452 50.548 12 32 12 L 31.820312 12 z M 28 16 L 36 16 C 47.129 16 48 16.871 48 28 L 48 36 C 48 47.129 47.129 48 36 48 L 28 48 C 16.871 48 16 47.129 16 36 L 16 28 C 16 16.871 16.871 16 28 16 z M 41.994141 20 C 40.889141 20.003 39.997 20.900859 40 22.005859 C 40.003 23.110859 40.900859 24.003 42.005859 24 C 43.110859 23.997 44.003 23.099141 44 21.994141 C 43.997 20.889141 43.099141 19.997 41.994141 20 z M 31.976562 22 C 26.454563 22.013 21.987 26.501437 22 32.023438 C 22.013 37.545437 26.501437 42.013 32.023438 42 C 37.545437 41.987 42.013 37.498562 42 31.976562 C 41.987 26.454563 37.498562 21.987 31.976562 22 z M 31.986328 26 C 35.299328 25.992 37.992 28.673328 38 31.986328 C 38.007 35.299328 35.326672 37.992 32.013672 38 C 28.700672 38.008 26.008 35.327672 26 32.013672 C 25.992 28.700672 28.673328 26.008 31.986328 26 z" />
+                                </svg>
+                            </a>
+                            <a class="nav-link" href="https://www.linkedin.com/company/trinopagamentos/" title="LinkedIn da Trino Pagamentos"
+                                target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48px" height="48px">
+                                    <path fill="#FFFFFF"
+                                        d="M 23.773438 12 C 12.855437 12 12 12.854437 12 23.773438 L 12 40.226562 C 12 51.144563 12.855438 52 23.773438 52 L 40.226562 52 C 51.144563 52 52 51.145563 52 40.226562 L 52 23.773438 C 52 12.854437 51.145563 12 40.226562 12 L 23.773438 12 z M 21.167969 16 L 42.832031 16 C 47.625031 16 48 16.374969 48 21.167969 L 48 42.832031 C 48 47.625031 47.624031 48 42.832031 48 L 21.167969 48 C 16.374969 48 16 47.624031 16 42.832031 L 16 21.167969 C 16 16.374969 16.374969 16 21.167969 16 z M 22.501953 18.503906 C 20.872953 18.503906 19.552734 19.824172 19.552734 21.451172 C 19.552734 23.078172 20.871953 24.400391 22.501953 24.400391 C 24.126953 24.400391 25.447266 23.079172 25.447266 21.451172 C 25.447266 19.826172 24.126953 18.503906 22.501953 18.503906 z M 37.933594 26.322266 C 35.473594 26.322266 33.823437 27.672172 33.148438 28.951172 L 33.078125 28.951172 L 33.078125 26.728516 L 28.228516 26.728516 L 28.228516 43 L 33.28125 43 L 33.28125 34.949219 C 33.28125 32.826219 33.687359 30.771484 36.318359 30.771484 C 38.912359 30.771484 38.945312 33.200891 38.945312 35.087891 L 38.945312 43 L 44 43 L 44 34.074219 C 44 29.692219 43.054594 26.322266 37.933594 26.322266 z M 19.972656 26.728516 L 19.972656 43 L 25.029297 43 L 25.029297 26.728516 L 19.972656 26.728516 z" />
+                                </svg>
+                            </a>
+                            <a class="nav-link" href="https://www.youtube.com/@trinopagamentos" title="YouTube da Trino Pagamentos" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48px" height="48px">
+                                    <path fill="#FFFFFF"
+                                        d="M 32 15 C 14.938 15 12.659656 15.177734 10.472656 17.427734 C 8.2856563 19.677734 8 23.252 8 32 C 8 40.748 8.2856562 44.323266 10.472656 46.572266 C 12.659656 48.821266 14.938 49 32 49 C 49.062 49 51.340344 48.821266 53.527344 46.572266 C 55.714344 44.322266 56 40.748 56 32 C 56 23.252 55.714344 19.677734 53.527344 17.427734 C 51.340344 15.177734 49.062 15 32 15 z M 32 19 C 45.969 19 49.379156 19.062422 50.535156 20.232422 C 51.691156 21.402422 52 24.538 52 32 C 52 39.462 51.691156 42.597578 50.535156 43.767578 C 49.379156 44.937578 45.969 45 32 45 C 18.031 45 14.620844 44.937578 13.464844 43.767578 C 12.308844 42.597578 12.03125 39.462 12.03125 32 C 12.03125 24.538 12.308844 21.402422 13.464844 20.232422 C 14.620844 19.062422 18.031 19 32 19 z M 27.949219 25.017578 L 27.949219 38.982422 L 40.095703 31.945312 L 27.949219 25.017578 z" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 pt-5">
+                    <p class="small pt-5"><small>A Trino Pagamentos LTDA (CNPJ: 26.363.066/0001-30) é uma Instituição de
+                            Pagamento, atuando como Emissora de Instrumento Pós-Pago em arranjo de pagamentos fechado
+                            próprio, conforme a Lei nº 12.865/2013 e regulamentação do Banco Central do Brasil. Oferecemos
+                            soluções financeiras digitais através de nossa plataforma tecnológica, incluindo a emissão e
+                            gestão de cartões (físicos e digitais).</small></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 py-5">
+                    <span class="line"></span>
+                </div>
+            </div>
+            <div class="row assinatura">
+                <div class="col-12 col-lg-3">
+                    <p class="text-center text-lg-start">@ 2025 Trino Pagamentos LTDA<br />Todos os direitos reservados.</p>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <p class="text-center">CNPJ: 26.363.066/0001-30<br>CNPJ: 26.363.066/0002-10</p>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <p class="text-center text-lg-end">
+                          Tel: <a href="tel:55115128-5600" title="Telefone: +55 (11) 5128-5600 da Trino Pagamentos" target="_blank">+55 (11) 5128-5600</a> <br/>
+                        E-mail: <a href="mailto:contato@trinopagamentos.com"
+                            title="contato@trinopagamentos.com">contato@trinopagamentos.com</a></p>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <p class="text-center text-lg-end">
+                        <a href="https://maps.app.goo.gl/wChDt9AM9YCN7G2Y6" title="Veja como chegar na Trino Pagamentos" target="_blank">R.
+                            Gomes de Carvalho, 1666 - 3º e 5º andar<br />Vila Olímpia, São Paulo -
+                            SP, 04547-006</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <p class="eyebrow">Portfólio Trino</p>
+                        <h3 id="itemModalTitle"></h3>
+                        <p id="itemModalDesc" class="section-subtitle" style="margin:4px 0 0;"></p>
+                        <div class="modal-meta" id="itemModalMeta"></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="itemCarousel" class="carousel slide" data-bs-ride="false">
+                        <div class="carousel-indicators" id="itemCarouselIndicators"></div>
+                        <div class="carousel-inner" id="itemCarouselInner"></div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#itemCarousel" data-bs-slide="prev" aria-label="Anterior" data-carousel-control>
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#itemCarousel" data-bs-slide="next" aria-label="Próximo" data-carousel-control>
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            const placeholderSvg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop stop-color='%231ec063' offset='0'/><stop stop-color='%23182433' offset='1'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g)'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23e7edf3' font-family='Inter, Arial, sans-serif' font-size='28' font-weight='700'>Foto em breve</text></svg>`);
+            const placeholderImage = `data:image/svg+xml;charset=UTF-8,${placeholderSvg}`;
+
+            const items = [
+                { name: 'Wobbler', quantity: '1 kit', description: 'Wobbler para prateleiras/caixas na rede credenciada.', images: [] },
+                { name: 'Placa de fachada', quantity: '1 unidade', description: 'Identificação externa do comércio credenciado.', images: ['assets/img/portfolio_placa-de-fachada.jpeg'] },
+                { name: 'Sacola preta', quantity: 'Lote para brindes', description: 'Sacola personalizada para ações e entregas.', images: [] },
+                { name: 'Sacola verde de TNT', quantity: 'Lote para brindes', description: 'Sacola resistente em TNT para ativações.', images: ['assets/img/portfolio_sacola-de-tnt.jpeg'] },
+                { name: 'Caneta verde', quantity: 'Kit para equipe', description: 'Caneta institucional para uso em campo.', images: ['assets/img/portfolio_caneta1.jpeg'] },
+                { name: 'Adesivo estabelecimento grande', quantity: '1 kit', description: 'Aplicação em vitrine ou porta de entrada.', images: [] },
+                { name: 'Adesivo estabelecimento pequeno', quantity: '1 kit', description: 'Aplicação em caixa, balcão ou vitrine menor.', images: [] },
+                { name: 'Balão', quantity: '2 modelos', description: 'Balões para ambientação e sinalização em eventos.', images: ['assets/img/portfolio_balao1.jpg', 'assets/img/portfolio_balao2.jpeg'] },
+                { name: 'Bexigas', quantity: '1 kit', description: 'Bexigas personalizadas para decoração rápida.', images: [] },
+                { name: 'Duas Impressoras', quantity: '2 unidades', description: 'Impressoras de apoio para credenciamento.', images: [] },
+                { name: '2 tablets', quantity: '2 unidades', description: 'Tablets para onboarding e cadastros em campo.', images: [] },
+                { name: '2 powerbank', quantity: '2 unidades', description: 'Powerbanks para manter os dispositivos carregados.', images: [] },
+                { name: '2 wind banners', quantity: '2 unidades', description: 'Wind banners para sinalização externa do ponto.', images: ['assets/img/portfolio_wind-banner.jpeg'] },
+                { name: 'Canecas', quantity: '1 lote', description: 'Brinde institucional para parceiros.', images: ['assets/img/portfolio_caneca1.jpeg'] },
+                { name: 'Caderneta (bloco de anotações)', quantity: '1 lote', description: 'Bloco para registros e follow-ups.', images: ['assets/img/portfolio_caderneta1.jpeg'] },
+                { name: 'Envelopes', quantity: '1 lote', description: 'Entrega de documentos ou cartões.', images: [] },
+                { name: 'Chaveiro abridor', quantity: '1 lote', description: 'Brinde útil para relacionamento.', images: [] },
+                { name: 'Banner com QR Code', quantity: '1 unidade', description: 'Atalho rápido para credenciamento e formulários.', images: [] },
+                { name: '2 balcões desmontáveis', quantity: '2 unidades', description: 'Balcões para ativações e credenciamento em campo.', images: ['assets/img/portfolio_balcao1.jpeg'] },
+                { name: 'Folder prefeito', quantity: '1 unidade', description: 'Folder institucional direcionado à prefeitura.', images: ['assets/img/portfolio_folder-prefeito.png'] },
+                { name: 'Folder servidor', quantity: '1 unidade', description: 'Folder com foco no servidor público.', images: ['assets/img/portfolio_folder-servidor.png'] },
+                { name: 'Folder comércio', quantity: '1 unidade', description: 'Folder para apresentação ao lojista.', images: ['assets/img/portfolio_folder-comercio.png'] }
+            ];
+
+            const grid = document.getElementById('itemsGrid');
+            const modalElement = document.getElementById('itemModal');
+            const modalTitle = document.getElementById('itemModalTitle');
+            const modalDesc = document.getElementById('itemModalDesc');
+            const modalMeta = document.getElementById('itemModalMeta');
+            const carouselInner = document.getElementById('itemCarouselInner');
+            const carouselIndicators = document.getElementById('itemCarouselIndicators');
+            const carouselControls = document.querySelectorAll('[data-carousel-control]');
+            const carousel = new bootstrap.Carousel(document.getElementById('itemCarousel'), { interval: false });
+            const modal = new bootstrap.Modal(modalElement);
+
+            function renderCards() {
+                grid.innerHTML = items.map((item, index) => {
+                    const hasPhotos = item.images && item.images.length > 0;
+                    const cover = hasPhotos ? item.images[0] : placeholderImage;
+                    const statusClass = hasPhotos ? 'ok' : 'soon';
+                    const statusLabel = hasPhotos ? 'Com foto' : 'Foto em breve';
+                    return `
+                        <button class="card" type="button" data-index="${index}" aria-label="Abrir ${item.name}">
+                            <div class="thumb ${hasPhotos ? '' : 'thumb-placeholder'}">
+                                <img src="${cover}" alt="${item.name}" loading="lazy">
+                            </div>
+                            <div>
+                                <div class="item-meta">
+                                    <span class="status"><span class="dot ${statusClass}"></span>${statusLabel}</span>
+                                    ${item.quantity ? `<span class="chip">Qtd: ${item.quantity}</span>` : ''}
+                                </div>
+                                <h3>${item.name}</h3>
+                                <p>${item.description || ''}</p>
+                                ${item.images && item.images.length > 1 ? '<span class="pill">Carrossel com múltiplas fotos</span>' : ''}
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+
+                grid.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', () => openModal(Number(card.dataset.index)));
+                });
+            }
+
+            function openModal(index) {
+                const item = items[index];
+                const hasPhotos = item.images && item.images.length > 0;
+                modalTitle.textContent = item.name;
+                modalDesc.textContent = item.description || '';
+                modalMeta.innerHTML = `${item.quantity ? `<span class="chip">Quantidade: ${item.quantity}</span>` : ''}<span class="chip">${hasPhotos ? 'Com foto' : 'Foto em breve'}</span>`;
+
+                const pictures = hasPhotos ? item.images : [placeholderImage];
+                carouselInner.innerHTML = pictures.map((src, i) => `
+                    <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                        <img src="${src}" class="d-block w-100" alt="${item.name} - imagem ${i + 1}">
+                    </div>
+                `).join('');
+
+                if (pictures.length > 1) {
+                    carouselIndicators.innerHTML = pictures.map((_, i) => `
+                        <button type="button" data-bs-target="#itemCarousel" data-bs-slide-to="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Slide ${i + 1}"></button>
+                    `).join('');
+                } else {
+                    carouselIndicators.innerHTML = '';
+                }
+
+                carouselControls.forEach(ctrl => ctrl.style.display = pictures.length > 1 ? '' : 'none');
+                carousel.to(0);
+                modal.show();
+            }
+
+            renderCards();
+        })();
+    </script>
+</body>
+</html>

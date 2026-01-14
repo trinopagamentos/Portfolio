@@ -1,0 +1,171 @@
+footer {
+    background-color: #32774b;
+    padding: 80px 0;
+}
+
+footer .logo {
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    footer .logo {
+        margin: 0 auto 40px;
+        display: block;
+    }
+}
+
+footer .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+footer .nav-footer ol,
+footer .nav-footer ul {
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer .nav-footer ol li,
+footer .nav-footer ul li {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 991.98px) {
+    footer .nav-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+}
+
+footer .nav-footer .nav-link {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.4s ease-in-out;
+    border: 0;
+    padding: inherit;
+}
+
+footer .nav-footer .nav-link.thin {
+    font-weight: 300;
+}
+
+footer .nav-footer .nav-link:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+    background: none;
+}
+
+@media (max-width: 991.98px) {
+    footer .nav-footer .nav-link {
+        text-align: center;
+    }
+}
+
+footer .nav-footer .redes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+@media (max-width: 991.98px) {
+    footer .nav-footer .redes {
+        justify-content: center;
+    }
+}
+
+footer .line {
+    display: block;
+    background-color: #0f172a;
+    height: 1px;
+    width: 100%;
+    overflow: hidden;
+}
+
+footer p {
+    color: #e2e8f0;
+    font-size: 1rem;
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    footer p {
+        margin: 0 auto 40px;
+        display: block;
+    }
+}
+
+footer p a {
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: all 0.4s ease-in-out;
+}
+
+footer p a:hover {
+    text-decoration: underline;
+}
+
+footer .nav-footer-2 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 24px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    footer .nav-footer-2 {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    footer .nav-footer-2 {
+        gap: 10px;
+    }
+}
+
+footer .nav-footer-2 .nav-link {
+    color: #e2e8f0;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Isola tipografia do footer para não herdar fontes da main */
+footer,
+footer * {
+    font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
+}
+
+/* Container fluid max width and padding */
+.container-fluid {
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+.container-fluid.pad0 {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+@media (min-width: 1200px) {
+    .container-fluid {
+        padding-left: 80px;
+        padding-right: 80px;
+    }
+
+    .container-fluid.pad0 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

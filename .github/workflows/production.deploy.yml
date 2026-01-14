@@ -1,0 +1,169 @@
+name: Deploy to Production
+on:
+  pull_request_review:
+    types: [submitted]
+  # Allow this script to be started manually
+  workflow_dispatch:
+
+env:
+  SECURITY_GROUP_ID: ${{ secrets.PRD_SECURITY_GROUP_ID }}
+  AWS_REGION: ${{ secrets.PRD_AWS_REGION }}
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+# if: github.event_name == 'workflow_dispatch' || github.event.review.state == 'approved'
+    steps:
+    - name: Get runner public IP
+      id: ip
+      run: |
+        # Get public IP using multiple methods for reliability
+        IP=$(curl -s https://api.ipify.org || curl -s https://ifconfig.me || curl -s https://icanhazip.com)
+        echo "ipv4=$IP" >> $GITHUB_OUTPUT
+        echo "Runner public IP: $IP"
+        
+    - name: Add current runner IP to security group
+      id: add-rule
+      run: |
+        echo "Adding current runner IP ${{ steps.ip.outputs.ipv4 }} to security group ${{ env.SECURITY_GROUP_ID }}"
+        if aws ec2 authorize-security-group-ingress \
+          --group-id ${{ env.SECURITY_GROUP_ID }} \
+          --protocol tcp \
+          --port 22 \
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32; then
+          echo "rule-added=true" >> $GITHUB_OUTPUT
+          echo "✅ Security group rule added successfully"
+        else
+          echo "rule-added=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Rule may already exist or failed to add"
+        fi
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.PRD_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PRD_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
+    
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Test SSH connectivity
+      run: |
+        echo "Testing SSH connectivity from current runner..."
+        echo "Current runner IP: ${{ steps.ip.outputs.ipv4 }}"
+        
+        # Test basic connectivity
+        if timeout 15 nc -zv ${{ secrets.PRD_SFTP_SERVER }} 22; then
+          echo "✅ SSH port 22 is reachable from current runner"
+        else
+          echo "⚠️ SSH port 22 not reachable from current runner"
+        fi
+    
+    - name: Copy files to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md"
+        target: ${{ secrets.PRD_SFTP_DIR }}
+        timeout: 300s
+        command_timeout: 10m
+    
+    - name: Clean sensitive files and folders
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 300s
+        command_timeout: 10m
+        script: |
+          cd ${{ secrets.PRD_SFTP_DIR }}
+          
+          echo "Starting cleanup process..."
+          
+          # Remove git folders and files
+          echo "Removing git-related folders..."
+          rm -rf .git
+          rm -rf .github
+          rm -rf .vscode
+          rm -rf .docker
+          
+          # Remove DS_Store files (recursively)
+          echo "Removing .DS_Store files..."
+          find . -name ".DS_Store" -type f -delete 2>/dev/null || true
+          
+          # Remove environment files
+          echo "Removing environment files..."
+          rm -f .env
+          rm -f .env.local
+          rm -f .env.development
+          rm -f .env.production
+          rm -f .env.staging
+          
+          # Remove development files
+          echo "Removing development files..."
+          rm -f .gitignore
+          rm -f .editorconfig
+          rm -f README.md
+          rm -f docker-compose.yml
+          rm -f Dockerfile
+          rm -f .dockerignore
+          
+          # Remove package files that might contain sensitive info
+          echo "Removing package files..."
+          rm -f package-lock.json
+          rm -f yarn.lock
+          rm -f composer.lock
+          
+          # Remove common development folders
+          echo "Removing development folders..."
+          rm -rf node_modules 2>/dev/null || true
+          rm -rf vendor/bin 2>/dev/null || true
+          rm -rf tests 2>/dev/null || true
+          rm -rf test 2>/dev/null || true
+          
+          echo "✅ Cleanup completed successfully"
+          
+          # Show final directory structure (optional, comment out if too verbose)
+          echo "Final directory structure:"
+          ls -la
+        
+    - name: Remove current runner IP from security group
+      run: |
+        echo "Removing current runner IP ${{ steps.ip.outputs.ipv4 }} from security group ${{ env.SECURITY_GROUP_ID }}"
+        if aws ec2 revoke-security-group-ingress \
+          --group-id ${{ env.SECURITY_GROUP_ID }} \
+          --protocol tcp \
+          --port 22 \
+          --cidr ${{ steps.ip.outputs.ipv4 }}/32; then
+          echo "✅ Security group rule removed successfully"
+        else
+          echo "⚠️ Rule may not exist or already removed"
+        fi
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.PRD_AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.PRD_AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
+      if: always() && steps.add-rule.outputs.rule-added == 'true'
+
+  notify:
+    name: Deployment Notification
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    if: always()
+    steps:
+    - name: Deployment status
+      run: |
+        if [ "${{ needs.deploy.result }}" = "success" ]; then
+          echo "✅ Production deployment completed successfully!"
+          echo "Deploy: ${{ needs.deploy.result }}"
+        else
+          echo "❌ Production deployment failed!"
+          echo "Deploy: ${{ needs.deploy.result }}"
+          exit 1
+        fi

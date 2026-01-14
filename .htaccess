@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /
+
+# Serve arquivos físicos normalmente
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Reescreve tudo para index.html (para /trinopay, /trinoempresas, /p, /e, hashes e query params)
+RewriteRule ^ index.html [L]
