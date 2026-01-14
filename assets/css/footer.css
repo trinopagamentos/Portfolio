@@ -41,6 +41,12 @@ footer .nav-footer ul li {
     }
 }
 
+@media (max-width: 575.98px) {
+    footer {
+        padding: 48px 0 32px;
+    }
+}
+
 footer .nav-footer .nav-link {
     color: #ffffff;
     font-size: 1rem;
@@ -97,6 +103,13 @@ footer p {
     footer p {
         margin: 0 auto 40px;
         display: block;
+    }
+}
+
+@media (max-width: 575.98px) {
+    footer p {
+        font-size: 0.95rem;
+        margin-bottom: 28px;
     }
 }
 
