@@ -1,6 +1,11 @@
 RewriteEngine On
 RewriteBase /
 
+# Bloqueia indexacao por cabecalho HTTP (fallback se meta tags forem ignoradas)
+<IfModule mod_headers.c>
+Header set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
+</IfModule>
+
 # Serve arquivos físicos normalmente
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
