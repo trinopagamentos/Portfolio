@@ -1,0 +1,250 @@
+[
+  {
+    "id": "wobbler",
+    "slug": "wobbler",
+    "name": "Wobbler",
+    "quantity": "20 unidades",
+    "description": "Wobbler para prateleiras/caixas na rede credenciada.",
+    "images": [
+      "assets/img/portfolio-wobbler1.png",
+      "assets/img/portfolio_wobbler2.jpeg"
+    ]
+  },
+  {
+    "id": "placa-de-fachada",
+    "slug": "placa-de-fachada",
+    "name": "Placa de fachada",
+    "quantity": "220 unidades",
+    "description": "Identificação externa do comércio credenciado.",
+    "images": [
+      "assets/img/portfolio_placa-de-fachada1.png"
+    ]
+  },
+  {
+    "id": "sacola-preta-plastico",
+    "slug": "sacola-preta-plastico",
+    "name": "Sacola preta (plástico)",
+    "quantity": "600 unidades",
+    "description": "Sacola personalizada para ações e entregas.",
+    "images": [
+      "assets/img/portfolio_sacola-preta1.jpeg"
+    ]
+  },
+  {
+    "id": "sacola-verde-tnt",
+    "slug": "sacola-verde-tnt",
+    "name": "Sacola verde (TNT)",
+    "quantity": "2.700 unidades",
+    "description": "Sacola resistente em TNT para ativações.",
+    "images": [
+      "assets/img/portfolio_sacola-de-tnt.jpeg"
+    ]
+  },
+  {
+    "id": "caneta-verde",
+    "slug": "caneta-verde",
+    "name": "Caneta verde",
+    "quantity": "2.300 unidades",
+    "description": "Caneta institucional para uso e distribuição em campo.",
+    "images": [
+      "assets/img/portfolio_canetas1.jpeg"
+    ]
+  },
+  {
+    "id": "adesivo-estabelecimento-grande",
+    "slug": "adesivo-estabelecimento-grande",
+    "name": "Adesivo estabelecimento grande",
+    "quantity": "800 unidades",
+    "description": "Aplicação em vitrine ou porta de entrada.",
+    "images": [
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-pdv-grande-e-pequeno.jpeg",
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-fachada-pequeno1.jpeg",
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-fachada-pequeno2.jpeg"
+    ]
+  },
+  {
+    "id": "adesivo-estabelecimento-pequeno",
+    "slug": "adesivo-estabelecimento-pequeno",
+    "name": "Adesivo estabelecimento pequeno",
+    "quantity": "800 unidades",
+    "description": "Aplicação em caixa, balcão ou vitrine menor.",
+    "images": [
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-pdv-grande-e-pequeno.jpeg",
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-fachada-grande1.jpeg",
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-fachada-grande2.jpeg"
+    ]
+  },
+  {
+    "id": "adesivo-para-qr-code",
+    "slug": "adesivo-para-qr-code",
+    "name": "Adesivo para QR Code",
+    "quantity": "800 unidades",
+    "description": "Aplicação em caixa, balcão ou vitrine.",
+    "images": [
+      "assets/img/portfolio_adesivo-estabelecimento-credenciado-pdv-caixa1.jpeg"
+    ]
+  },
+  {
+    "id": "balao",
+    "slug": "balao",
+    "name": "Balão",
+    "quantity": "1 unidade",
+    "description": "Balões para ambientação e sinalização em eventos.",
+    "images": [
+      "assets/img/portfolio_balao1.jpg",
+      "assets/img/portfolio_balao2.jpeg"
+    ]
+  },
+  {
+    "id": "bexigas",
+    "slug": "bexigas",
+    "name": "Bexigas",
+    "quantity": "2.000 unidades",
+    "description": "Bexigas personalizadas para decoração rápida.",
+    "images": [
+      "assets/img/portfolio_bexiga-branca1.jpeg",
+      "assets/img/portfolio_bexiga-preta1.jpeg",
+      "assets/img/portfolio_bexiga-verde1.jpeg",
+      "assets/img/portfolio_bexiga-verde2.jpeg"
+    ]
+  },
+  {
+    "id": "impressoras",
+    "slug": "impressoras",
+    "name": "Impressoras",
+    "quantity": "6 unidades",
+    "description": "Impressoras de apoio para impreesão do QR Code do comércio credenciado.",
+    "images": [
+      "assets/img/portfolio_impressora1.jpeg",
+      "assets/img/portfolio_impressora2.jpeg",
+      "assets/img/portfolio_impressora1.jpeg"
+    ]
+  },
+  {
+    "id": "tablets",
+    "slug": "tablets",
+    "name": "Tablets",
+    "quantity": "6 unidades",
+    "description": "Tablets para onboarding e cadastros em campo (2 para cada time).",
+    "images": []
+  },
+  {
+    "id": "tablet-para-consulta-de-transacoes-pdv",
+    "slug": "tablet-para-consulta-de-transacoes-pdv",
+    "name": "Tablet para consulta de transações (PDV)",
+    "quantity": "10 unidades",
+    "description": "Tablet em comodato para PDVs com filial ou sem comerciante no local, permitindo ao funcionário acompanhar as transações em tempo real.",
+    "images": [
+      "assets/img/portfolio-tablet-para-pdv1.jpeg"
+    ]
+  },
+  {
+    "id": "powerbank",
+    "slug": "powerbank",
+    "name": "Powerbank",
+    "quantity": "6 unidades",
+    "description": "Powerbanks para manter os dispositivos carregados. (2 para cada time)",
+    "images": [
+      "assets/img/portfolio_powerbank1.jpeg"
+    ]
+  },
+  {
+    "id": "wind-banners",
+    "slug": "wind-banners",
+    "name": "Wind banners",
+    "quantity": "3 unidades",
+    "description": "Wind banners para sinalização externa de eventos e ativações.",
+    "images": [
+      "assets/img/portfolio_wind-banner.jpeg"
+    ]
+  },
+  {
+    "id": "caneca",
+    "slug": "caneca",
+    "name": "Caneca",
+    "quantity": "950 unidades",
+    "description": "Brinde institucional para parceiros.",
+    "images": [
+      "assets/img/portfolio_caneca1.jpeg"
+    ]
+  },
+  {
+    "id": "caderneta-bloco-de-anotacoes",
+    "slug": "caderneta-bloco-de-anotacoes",
+    "name": "Caderneta (bloco de anotações)",
+    "quantity": "200 unidades",
+    "description": "Bloco para registros e follow-ups.",
+    "images": [
+      "assets/img/portfolio_caderneta1.jpeg"
+    ]
+  },
+  {
+    "id": "envelopes",
+    "slug": "envelopes",
+    "name": "Envelopes",
+    "quantity": "600 unidades",
+    "description": "Entrega de documentos ou cartões.",
+    "images": [
+      "assets/img/portfolio_envelope-branco1.jpeg",
+      "assets/img/portfolio_envelope-preto1.jpeg"
+    ]
+  },
+  {
+    "id": "chaveiro-abridor",
+    "slug": "chaveiro-abridor",
+    "name": "Chaveiro abridor",
+    "quantity": "300 unidades",
+    "description": "Brinde útil para relacionamento.",
+    "images": [
+      "assets/img/portfolio_chaveiro-abridor1.jpeg"
+    ]
+  },
+  {
+    "id": "balcoes-desmontaveis",
+    "slug": "balcoes-desmontaveis",
+    "name": "Balcões desmontáveis",
+    "quantity": "2 unidades",
+    "description": "Balcões para ativações e credenciamento em campo.",
+    "images": [
+      "assets/img/portfolio_balcao1.jpeg"
+    ]
+  },
+  {
+    "id": "pasta-executiva",
+    "slug": "pasta-executiva",
+    "name": "Pasta Executiva",
+    "quantity": "10 unidades",
+    "description": "Distribuída exclusivamente para autoridades políticas (prefeito, assessores e chefes de gabinete).",
+    "images": []
+  },
+  {
+    "id": "folder-prefeito-modelo-antigo",
+    "slug": "folder-prefeito-modelo-antigo",
+    "name": "Folder prefeito (modelo antigo)",
+    "quantity": "500 unidades",
+    "description": "Folder institucional direcionado à prefeitura.",
+    "images": [
+      "assets/img/portfolio_folder-prefeito.png"
+    ]
+  },
+  {
+    "id": "folder-servidor-modelo-antigo",
+    "slug": "folder-servidor-modelo-antigo",
+    "name": "Folder servidor (modelo antigo)",
+    "quantity": "4.500 unidades",
+    "description": "Folder com foco no servidor público.",
+    "images": [
+      "assets/img/portfolio_folder-servidor.png"
+    ]
+  },
+  {
+    "id": "folder-comercio-modelo-antigo",
+    "slug": "folder-comercio-modelo-antigo",
+    "name": "Folder comércio (modelo antigo)",
+    "quantity": "4.000 unidades",
+    "description": "Folder para apresentação ao lojista.",
+    "images": [
+      "assets/img/portfolio_folder-comercio.png"
+    ]
+  }
+]
