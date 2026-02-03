@@ -1,3 +1,59 @@
+<?php
+$host_portfolio = 'trino-geral.cktagy486zky.us-east-1.rds.amazonaws.com';
+$user_portfolio = 'trino_portfolio';
+$pass_portfolio = 'm0pgRltg-qIq}F5%';
+$dbname_portfolio = 'trino_portfolio';
+
+$items = [];
+try {
+    $pdo_portfolio = new PDO(
+        "mysql:host=$host_portfolio;dbname=$dbname_portfolio;charset=utf8mb4",
+        $user_portfolio,
+        $pass_portfolio,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+
+    $pdo_portfolio->exec("
+        CREATE TABLE IF NOT EXISTS portfolio_items (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            slug VARCHAR(150) NOT NULL UNIQUE,
+            name VARCHAR(255) NOT NULL,
+            quantity VARCHAR(120) NULL,
+            description TEXT NULL,
+            images_json LONGTEXT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ");
+
+    $stmt = $pdo_portfolio->query("SELECT slug, name, quantity, description, images_json FROM portfolio_items ORDER BY name");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $images = [];
+        if (!empty($row['images_json'])) {
+            $decoded = json_decode($row['images_json'], true);
+            if (is_array($decoded)) {
+                $images = $decoded;
+            }
+        }
+
+        $items[] = [
+            'id' => $row['slug'],
+            'slug' => $row['slug'],
+            'name' => $row['name'],
+            'quantity' => $row['quantity'],
+            'description' => $row['description'],
+            'images' => $images
+        ];
+    }
+} catch (PDOException $e) {
+    $items = [];
+}
+
+$itemsJson = json_encode($items, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+if ($itemsJson === false) {
+    $itemsJson = '[]';
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -733,6 +789,7 @@
         (function() {
             const placeholderSvg = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop stop-color='%231ec063' offset='0'/><stop stop-color='%23182433' offset='1'/></linearGradient></defs><rect width='400' height='300' fill='url(%23g)'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23e7edf3' font-family='Inter, Arial, sans-serif' font-size='28' font-weight='700'>Foto em breve</text></svg>`);
             const placeholderImage = `data:image/svg+xml;charset=UTF-8,${placeholderSvg}`;
+            const serverItems = <?php echo $itemsJson; ?>;
 
             const defaultItems = [
                 { id: 'wobbler', slug: 'wobbler', name: 'Wobbler', quantity: '20 unidades', description: 'Wobbler para prateleiras/caixas na rede credenciada.', images: ['assets/img/portfolio-wobbler1.png', 'assets/img/portfolio_wobbler2.jpeg'] },
@@ -761,7 +818,6 @@
                 { id: 'folder-servidor-modelo-antigo', slug: 'folder-servidor-modelo-antigo', name: 'Folder servidor (modelo antigo)', quantity: '4.500 unidades', description: 'Folder com foco no servidor público.', images: ['assets/img/portfolio_folder-servidor.png'] },
                 { id: 'folder-comercio-modelo-antigo', slug: 'folder-comercio-modelo-antigo', name: 'Folder comércio (modelo antigo)', quantity: '4.000 unidades', description: 'Folder para apresentação ao lojista.', images: ['assets/img/portfolio_folder-comercio.png'] }
             ];
-            let items = [];
 
             const grid = document.getElementById('itemsGrid');
             const modalElement = document.getElementById('itemModal');
@@ -774,12 +830,17 @@
             const carousel = new bootstrap.Carousel(document.getElementById('itemCarousel'), { interval: false });
             const modal = new bootstrap.Modal(modalElement);
 
+            let items = [];
+            if (Array.isArray(serverItems) && serverItems.length > 0) {
+                items = serverItems;
+            } else {
+                items = defaultItems;
+            }
+
             function renderCards() {
                 grid.innerHTML = items.map((item, index) => {
                     const hasPhotos = item.images && item.images.length > 0;
                     const cover = hasPhotos ? item.images[0] : placeholderImage;
-                    const statusClass = hasPhotos ? 'ok' : 'soon';
-                    const statusLabel = hasPhotos ? 'Com foto' : 'Foto em breve';
                     return `
                         <button class="card" type="button" data-index="${index}" aria-label="Abrir ${item.name}">
                             <div class="thumb ${hasPhotos ? '' : 'thumb-placeholder'}">
@@ -847,26 +908,8 @@
                 modal.show();
             }
 
-            async function loadItems() {
-                try {
-                    const response = await fetch('assets/portfolio_items.json', { cache: 'no-store' });
-                    if (!response.ok) {
-                        throw new Error('Falha ao carregar itens');
-                    }
-                    const data = await response.json();
-                    items = Array.isArray(data) ? data : (data.items || []);
-                    if (!Array.isArray(items) || items.length === 0) {
-                        items = defaultItems;
-                    }
-                } catch (error) {
-                    items = defaultItems;
-                }
-            }
-
-            loadItems().then(() => {
-                renderCards();
-                bindKitThumbs();
-            });
+            renderCards();
+            bindKitThumbs();
         })();
     </script>
 </body>
