@@ -103,7 +103,7 @@ jobs:
         host: ${{ secrets.PRD_SFTP_SERVER }}
         username: ${{ secrets.PRD_SFTP_USER }}
         key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
-        source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md"
+        source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md, !assets/img"
         target: ${{ secrets.PRD_SFTP_DIR }}
         timeout: 300s
         command_timeout: 10m
