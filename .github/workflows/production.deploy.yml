@@ -55,7 +55,9 @@ jobs:
     timeout-minutes: 20
     outputs:
       deploy_started_at: ${{ steps.notify_start.outputs.event_timestamp }}
+      release_id: ${{ steps.release.outputs.release_id }}
       healthcheck_outcome: ${{ steps.healthcheck.outcome }}
+      rollback_status: ${{ steps.finalize.outputs.rollback_status }}
     steps:
     - name: Get runner public IP
       id: ip
@@ -124,6 +126,48 @@ jobs:
         metadata-json: |
           {"notification_channel":"clickup_devops"}
 
+    - name: Prepare release metadata
+      id: release
+      run: |
+        TARGET_DIR="${{ secrets.PRD_SFTP_DIR }}"
+        TARGET_DIR="${TARGET_DIR%/}"
+        APP_NAME="$(basename "$TARGET_DIR")"
+        PARENT_DIR="$(dirname "$TARGET_DIR")"
+        RELEASE_ID="$(date -u +%Y%m%d%H%M%S)-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        RELEASES_DIR="$PARENT_DIR/.releases/$APP_NAME"
+        RELEASE_DIR="$RELEASES_DIR/$RELEASE_ID"
+
+        echo "release_id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
+        echo "releases_dir=$RELEASES_DIR" >> "$GITHUB_OUTPUT"
+        echo "live_dir=$TARGET_DIR" >> "$GITHUB_OUTPUT"
+        echo "release_dir=$RELEASE_DIR" >> "$GITHUB_OUTPUT"
+
+    - name: Bootstrap release directories
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 300s
+        command_timeout: 5m
+        script: |
+          set -eu
+          TARGET_DIR="${{ steps.release.outputs.live_dir }}"
+          RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
+          RELEASE_DIR="${{ steps.release.outputs.release_dir }}"
+
+          mkdir -p "$RELEASES_DIR"
+          if [ -d "$TARGET_DIR" ] && [ ! -L "$TARGET_DIR" ]; then
+            LEGACY_DIR="$RELEASES_DIR/legacy-initial-$(date +%Y%m%d%H%M%S)"
+            mv "$TARGET_DIR" "$LEGACY_DIR"
+            ln -s "$LEGACY_DIR" "$TARGET_DIR"
+          fi
+          if [ -L "$TARGET_DIR" ]; then
+            readlink -f "$TARGET_DIR" > "$RELEASES_DIR/.previous_target"
+          fi
+          rm -rf "$RELEASE_DIR"
+          mkdir -p "$RELEASE_DIR"
+
     - name: Copy files to server
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -131,10 +175,30 @@ jobs:
         username: ${{ secrets.PRD_SFTP_USER }}
         key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
         source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md, !assets/img"
-        target: ${{ secrets.PRD_SFTP_DIR }}
+        target: ${{ steps.release.outputs.release_dir }}
         timeout: 300s
         command_timeout: 10m
     
+    - name: Promote release
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 300s
+        command_timeout: 5m
+        script: |
+          set -eu
+          TARGET_DIR="${{ steps.release.outputs.live_dir }}"
+          RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
+          RELEASE_DIR="${{ steps.release.outputs.release_dir }}"
+          if [ -L "$TARGET_DIR" ]; then
+            readlink -f "$TARGET_DIR" > "$RELEASES_DIR/.previous_target"
+          fi
+          ln -sfn "$RELEASE_DIR" "${TARGET_DIR}.next"
+          mv -Tf "${TARGET_DIR}.next" "$TARGET_DIR"
+          echo "✅ Release promoted: $RELEASE_DIR"
+
     - name: Post-deploy smoke check
       id: healthcheck
       if: always()
@@ -142,6 +206,47 @@ jobs:
       run: |
         curl --silent --show-error --fail --location --max-time 20 "https://portfolio.trinopagamentos.com/" >/dev/null
         echo "✅ Portfolio smoke check passed"
+
+    - name: Rollback release if smoke check fails
+      id: rollback
+      if: always() && steps.healthcheck.outcome == "failure"
+      continue-on-error: true
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 300s
+        command_timeout: 5m
+        script: |
+          set -eu
+          TARGET_DIR="${{ steps.release.outputs.live_dir }}"
+          RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
+          PREVIOUS_TARGET="$(cat "$RELEASES_DIR/.previous_target" 2>/dev/null || true)"
+          if [ -z "$PREVIOUS_TARGET" ] || [ ! -e "$PREVIOUS_TARGET" ]; then
+            echo "Previous release target is invalid: $PREVIOUS_TARGET"
+            exit 1
+          fi
+          ln -sfn "$PREVIOUS_TARGET" "${TARGET_DIR}.rollback"
+          mv -Tf "${TARGET_DIR}.rollback" "$TARGET_DIR"
+          echo "✅ Rollback restored previous release: $PREVIOUS_TARGET"
+
+    - name: Cleanup old releases
+      if: always()
+      continue-on-error: true
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 60s
+        command_timeout: 2m
+        script: |
+          set -eu
+          RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
+          if [ -d "$RELEASES_DIR" ]; then
+            ls -1dt "$RELEASES_DIR"/* 2>/dev/null | awk "NR>5" | xargs -r rm -rf
+          fi
 
     - name: Clean sensitive files and folders
       uses: appleboy/ssh-action@v1.0.3
@@ -152,7 +257,7 @@ jobs:
         timeout: 300s
         command_timeout: 10m
         script: |
-          cd ${{ secrets.PRD_SFTP_DIR }}
+          cd "${{ steps.release.outputs.release_dir }}"
           
           echo "Starting cleanup process..."
           
@@ -222,12 +327,21 @@ jobs:
       if: always() && steps.add-rule.outputs.rule-added == 'true'
 
     - name: Finalize deployment result
+      id: finalize
       if: always()
       run: |
+        rollback_status="not_applicable"
         if [ "${{ steps.healthcheck.outcome }}" = "failure" ]; then
           echo "❌ Post-deploy smoke check failed"
+          if [ "${{ steps.rollback.outcome }}" = "success" ]; then
+            rollback_status="success"
+          elif [ "${{ steps.rollback.outcome }}" = "failure" ]; then
+            rollback_status="failed"
+          fi
+          echo "rollback_status=$rollback_status" >> "$GITHUB_OUTPUT"
           exit 1
         fi
+        echo "rollback_status=$rollback_status" >> "$GITHUB_OUTPUT"
         echo "✅ Deploy flow completed successfully"
 
   notify:
@@ -277,7 +391,7 @@ jobs:
           gates-json: |
             {"semgrep":"${{ needs.semgrep.result }}","gitleaks":"${{ needs.gitleaks.result }}","trivy":"${{ needs.trivy.result }}","post_deploy_smoke_check":"${{ needs.deploy.outputs.healthcheck_outcome }}","deploy":"${{ needs.deploy.result }}"}
           metadata-json: |
-            {"notification_channel":"clickup_devops","post_deploy_check_name":"Portfolio public smoke check","post_deploy_check_url":"https://portfolio.trinopagamentos.com/","post_deploy_check_result":"${{ needs.deploy.outputs.healthcheck_outcome }}"}
+            {"notification_channel":"clickup_devops","release_id":"${{ needs.deploy.outputs.release_id }}","post_deploy_check_name":"Portfolio public smoke check","post_deploy_check_url":"https://portfolio.trinopagamentos.com/","post_deploy_check_result":"${{ needs.deploy.outputs.healthcheck_outcome }}"}
       - name: Notification summary
         run: |
           echo "Deploy result: ${{ needs.deploy.result }}"
