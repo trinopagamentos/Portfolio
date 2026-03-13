@@ -40,3 +40,35 @@ Também é possível disparar o deploy diretamente pelo navegador:
 1. Acesse [Actions → Deploy to Production](https://github.com/trinopagamentos/Portfolio/actions/workflows/production.deploy.yml)
 2. Clique em **Run workflow**
 3. Selecione a branch `main` e confirme
+
+
+## Observabilidade de Deploy
+
+Este projeto publica eventos de deploy no canal `#devops` do ClickUp por meio do relay central da Trino.
+
+### O que a esteira publica
+
+- início do deploy (`deploy_started`)
+- fim do deploy (`deploy_finished`)
+- resultado dos gates de segurança
+- resultado da validação pós-deploy
+- próxima ação operacional
+
+### Validação pós-deploy
+
+Após a publicação, a esteira executa o check:
+
+```bash
+curl --silent --show-error --fail --location --max-time 20 "https://portfolio.trinopagamentos.com/"
+```
+
+Esse check aparece no ClickUp com o nome:
+
+- `Portfolio public smoke check`
+
+### Secrets esperados no GitHub
+
+- `DEPLOY_RELAY_URL`
+- `DEPLOY_RELAY_SHARED_SECRET`
+
+Esses secrets permitem que o workflow envie o status padronizado para o relay central, que então publica no ClickUp.
