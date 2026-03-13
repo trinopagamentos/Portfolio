@@ -55,6 +55,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       deploy_started_at: ${{ steps.notify_start.outputs.event_timestamp }}
+      healthcheck_outcome: ${{ steps.healthcheck.outcome }}
     steps:
     - name: Get runner public IP
       id: ip
@@ -134,6 +135,14 @@ jobs:
         timeout: 300s
         command_timeout: 10m
     
+    - name: Post-deploy smoke check
+      id: healthcheck
+      if: always()
+      continue-on-error: true
+      run: |
+        curl --silent --show-error --fail --location --max-time 20 "https://portfolio.trinopagamentos.com/" >/dev/null
+        echo "✅ Portfolio smoke check passed"
+
     - name: Clean sensitive files and folders
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -212,6 +221,15 @@ jobs:
         AWS_DEFAULT_REGION: ${{ env.AWS_REGION }}
       if: always() && steps.add-rule.outputs.rule-added == 'true'
 
+    - name: Finalize deployment result
+      if: always()
+      run: |
+        if [ "${{ steps.healthcheck.outcome }}" = "failure" ]; then
+          echo "❌ Post-deploy smoke check failed"
+          exit 1
+        fi
+        echo "✅ Deploy flow completed successfully"
+
   notify:
     name: Deployment Notification
     needs: [deploy]
@@ -257,9 +275,9 @@ jobs:
           rollback-status: not_applicable
           started-at: ${{ needs.deploy.outputs.deploy_started_at }}
           gates-json: |
-            {"semgrep":"${{ needs.semgrep.result }}","gitleaks":"${{ needs.gitleaks.result }}","trivy":"${{ needs.trivy.result }}","deploy":"${{ needs.deploy.result }}"}
+            {"semgrep":"${{ needs.semgrep.result }}","gitleaks":"${{ needs.gitleaks.result }}","trivy":"${{ needs.trivy.result }}","post_deploy_smoke_check":"${{ needs.deploy.outputs.healthcheck_outcome }}","deploy":"${{ needs.deploy.result }}"}
           metadata-json: |
-            {"notification_channel":"clickup_devops"}
+            {"notification_channel":"clickup_devops","post_deploy_check_name":"Portfolio public smoke check","post_deploy_check_url":"https://portfolio.trinopagamentos.com/","post_deploy_check_result":"${{ needs.deploy.outputs.healthcheck_outcome }}"}
       - name: Notification summary
         run: |
           echo "Deploy result: ${{ needs.deploy.result }}"
