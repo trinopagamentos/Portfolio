@@ -209,7 +209,7 @@ jobs:
 
     - name: Rollback release if smoke check fails
       id: rollback
-      if: always() && steps.healthcheck.outcome == "failure"
+      if: always() && steps.healthcheck.outcome == 'failure'
       continue-on-error: true
       uses: appleboy/ssh-action@v1.0.3
       with:
