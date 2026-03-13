@@ -6,8 +6,6 @@ import os
 import subprocess
 import sys
 import time
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 
 
@@ -207,33 +205,56 @@ def post_payload(payload: dict) -> tuple[str, str]:
         hashlib.sha256,
     ).hexdigest()
 
-    request = urllib.request.Request(
-        relay_url,
-        data=body,
-        method="POST",
-        headers={
-            "Content-Type": "application/json",
-            "X-Deploy-Timestamp": timestamp,
-            "X-Deploy-Signature": signature,
-        },
-    )
-
     try:
-        with urllib.request.urlopen(request, timeout=15) as response:
-            status_code = response.getcode()
-            response_body = response.read().decode("utf-8", errors="ignore")
-            if 200 <= status_code < 300:
-                print(f"Relay accepted deploy event ({status_code}).")
-                return "sent", response_body
-            print(f"::warning::Relay returned HTTP {status_code}: {response_body}")
-            return "failed", response_body
-    except urllib.error.HTTPError as exc:
-        body_text = exc.read().decode("utf-8", errors="ignore")
-        print(f"::warning::Relay HTTP error {exc.code}: {body_text}")
-        return "failed", body_text
-    except Exception as exc:  # pragma: no cover - network level
+        result = subprocess.run(
+            [
+                "curl",
+                "--silent",
+                "--show-error",
+                "--location",
+                "--max-time",
+                "15",
+                "--write-out",
+                "\\n%{http_code}",
+                "--header",
+                "Content-Type: application/json",
+                "--header",
+                f"X-Deploy-Timestamp: {timestamp}",
+                "--header",
+                f"X-Deploy-Signature: {signature}",
+                "--request",
+                "POST",
+                "--data-binary",
+                "@-",
+                relay_url,
+            ],
+            input=body,
+            capture_output=True,
+            check=False,
+        )
+    except Exception as exc:  # pragma: no cover - process level
         print(f"::warning::Relay request failed: {exc}")
         return "failed", str(exc)
+
+    stdout = result.stdout.decode("utf-8", errors="ignore")
+    stderr = result.stderr.decode("utf-8", errors="ignore").strip()
+    http_code = 0
+    response_body = stdout
+
+    if "\n" in stdout:
+        response_body, http_code_text = stdout.rsplit("\n", 1)
+        try:
+            http_code = int(http_code_text.strip())
+        except ValueError:
+            http_code = 0
+
+    if result.returncode == 0 and 200 <= http_code < 300:
+        print(f"Relay accepted deploy event ({http_code}).")
+        return "sent", response_body
+
+    error_message = stderr or response_body or f"HTTP {http_code}"
+    print(f"::warning::Relay request failed ({http_code}): {error_message}")
+    return "failed", error_message
 
 
 def main() -> int:
