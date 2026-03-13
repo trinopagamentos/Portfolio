@@ -8,6 +8,8 @@ on:
 env:
   SECURITY_GROUP_ID: ${{ secrets.PRD_SECURITY_GROUP_ID }}
   AWS_REGION: ${{ secrets.PRD_AWS_REGION }}
+  DEPLOY_RELAY_URL: ${{ secrets.DEPLOY_RELAY_URL }}
+  DEPLOY_RELAY_SHARED_SECRET: ${{ secrets.DEPLOY_RELAY_SHARED_SECRET }}
 
 jobs:
   semgrep:
@@ -51,6 +53,8 @@ jobs:
     needs: [semgrep, gitleaks, trivy]
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      deploy_started_at: ${{ steps.notify_start.outputs.event_timestamp }}
     steps:
     - name: Get runner public IP
       id: ip
@@ -97,6 +101,28 @@ jobs:
           echo "⚠️ SSH port 22 not reachable from current runner"
         fi
     
+    - name: Publish deploy started
+      id: notify_start
+      continue-on-error: true
+      uses: ./.github/actions/clickup-deploy-notify
+      with:
+        relay-url: ${{ env.DEPLOY_RELAY_URL }}
+        relay-shared-secret: ${{ env.DEPLOY_RELAY_SHARED_SECRET }}
+        application: Portfolio
+        environment: production
+        event-type: deploy_started
+        job-name: Deploy to Production
+        stage: deploy
+        target-type: php_server
+        target-name: production_sftp
+        workflow-pattern: scp_ssh_cleanup
+        cleanup-status: pending
+        rollback-status: not_applicable
+        gates-json: |
+          {"semgrep":"${{ needs.semgrep.result }}","gitleaks":"${{ needs.gitleaks.result }}","trivy":"${{ needs.trivy.result }}"}
+        metadata-json: |
+          {"notification_channel":"clickup_devops"}
+
     - name: Copy files to server
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -203,3 +229,37 @@ jobs:
           echo "Deploy: ${{ needs.deploy.result }}"
           exit 1
         fi
+
+  notify_clickup:
+    name: ClickUp Deploy Notification
+    needs: [semgrep, gitleaks, trivy, deploy]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: always() && needs.deploy.result != 'skipped'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish deploy finished
+        continue-on-error: true
+        uses: ./.github/actions/clickup-deploy-notify
+        with:
+          relay-url: ${{ env.DEPLOY_RELAY_URL }}
+          relay-shared-secret: ${{ env.DEPLOY_RELAY_SHARED_SECRET }}
+          application: Portfolio
+          environment: production
+          event-type: deploy_finished
+          job-result: ${{ needs.deploy.result }}
+          job-name: ClickUp Deploy Notification
+          stage: deploy
+          target-type: php_server
+          target-name: production_sftp
+          workflow-pattern: scp_ssh_cleanup
+          cleanup-status: completed_or_best_effort
+          rollback-status: not_applicable
+          started-at: ${{ needs.deploy.outputs.deploy_started_at }}
+          gates-json: |
+            {"semgrep":"${{ needs.semgrep.result }}","gitleaks":"${{ needs.gitleaks.result }}","trivy":"${{ needs.trivy.result }}","deploy":"${{ needs.deploy.result }}"}
+          metadata-json: |
+            {"notification_channel":"clickup_devops"}
+      - name: Notification summary
+        run: |
+          echo "Deploy result: ${{ needs.deploy.result }}"

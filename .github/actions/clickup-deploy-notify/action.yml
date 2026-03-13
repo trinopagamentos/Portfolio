@@ -1,0 +1,103 @@
+name: ClickUp Deploy Notify
+description: Sends deploy observability events to the internal relay
+
+inputs:
+  relay-url:
+    description: Internal relay URL
+    required: false
+  relay-shared-secret:
+    description: Shared secret used to sign relay requests
+    required: false
+  application:
+    description: Logical application name
+    required: true
+  environment:
+    description: Deployment environment
+    required: false
+    default: production
+  event-type:
+    description: deploy_started or deploy_finished
+    required: true
+  status:
+    description: started, success, failure or cancelled
+    required: false
+  job-result:
+    description: GitHub Actions result for the deploy job
+    required: false
+  job-name:
+    description: Human readable job name
+    required: false
+  stage:
+    description: Current stage
+    required: false
+  target-type:
+    description: Logical target type
+    required: false
+  target-name:
+    description: Logical target name
+    required: false
+  workflow-pattern:
+    description: Workflow implementation pattern
+    required: false
+  cleanup-status:
+    description: Cleanup status
+    required: false
+  rollback-status:
+    description: Rollback status
+    required: false
+  started-at:
+    description: Deploy start timestamp in UTC
+    required: false
+  completed-at:
+    description: Deploy completion timestamp in UTC
+    required: false
+  gates-json:
+    description: JSON object with gate results
+    required: false
+    default: "{}"
+  metadata-json:
+    description: Additional metadata to include in the payload
+    required: false
+    default: "{}"
+  failure-stage:
+    description: Specific failing stage
+    required: false
+  failure-summary:
+    description: Human readable failure summary
+    required: false
+
+outputs:
+  event_timestamp:
+    description: UTC timestamp generated for the event
+    value: ${{ steps.send.outputs.event_timestamp }}
+  delivery_status:
+    description: sent, skipped or failed
+    value: ${{ steps.send.outputs.delivery_status }}
+
+runs:
+  using: composite
+  steps:
+    - id: send
+      shell: bash
+      env:
+        INPUT_RELAY_URL: ${{ inputs.relay-url }}
+        INPUT_RELAY_SHARED_SECRET: ${{ inputs.relay-shared-secret }}
+        INPUT_APPLICATION: ${{ inputs.application }}
+        INPUT_ENVIRONMENT: ${{ inputs.environment }}
+        INPUT_EVENT_TYPE: ${{ inputs.event-type }}
+        INPUT_STATUS: ${{ inputs.status }}
+        INPUT_JOB_RESULT: ${{ inputs.job-result }}
+        INPUT_JOB_NAME: ${{ inputs.job-name }}
+        INPUT_STAGE: ${{ inputs.stage }}
+        INPUT_TARGET_TYPE: ${{ inputs.target-type }}
+        INPUT_TARGET_NAME: ${{ inputs.target-name }}
+        INPUT_WORKFLOW_PATTERN: ${{ inputs.workflow-pattern }}
+        INPUT_CLEANUP_STATUS: ${{ inputs.cleanup-status }}
+        INPUT_ROLLBACK_STATUS: ${{ inputs.rollback-status }}
+        INPUT_STARTED_AT: ${{ inputs.started-at }}
+        INPUT_COMPLETED_AT: ${{ inputs.completed-at }}
+        INPUT_GATES_JSON: ${{ inputs.gates-json }}
+        INPUT_METADATA_JSON: ${{ inputs.metadata-json }}
+        INPUT_FAILURE_STAGE: ${{ inputs.failure-stage }}
+        INPUT_FAILURE_SUMMARY: ${{ inputs.failure-summary }}
+      run: python3 "${{ github.action_path }}/scripts/send_deploy_event.py"
