@@ -136,11 +136,17 @@ jobs:
         RELEASE_ID="$(date -u +%Y%m%d%H%M%S)-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
         RELEASES_DIR="$PARENT_DIR/.releases/$APP_NAME"
         RELEASE_DIR="$RELEASES_DIR/$RELEASE_ID"
+        SHARED_DIR="$PARENT_DIR/.shared/$APP_NAME"
+        SHARED_ASSETS_DIR="$SHARED_DIR/assets"
+        SHARED_IMG_DIR="$SHARED_ASSETS_DIR/img"
 
         echo "release_id=$RELEASE_ID" >> "$GITHUB_OUTPUT"
         echo "releases_dir=$RELEASES_DIR" >> "$GITHUB_OUTPUT"
         echo "live_dir=$TARGET_DIR" >> "$GITHUB_OUTPUT"
         echo "release_dir=$RELEASE_DIR" >> "$GITHUB_OUTPUT"
+        echo "shared_dir=$SHARED_DIR" >> "$GITHUB_OUTPUT"
+        echo "shared_assets_dir=$SHARED_ASSETS_DIR" >> "$GITHUB_OUTPUT"
+        echo "shared_img_dir=$SHARED_IMG_DIR" >> "$GITHUB_OUTPUT"
 
     - name: Bootstrap release directories
       uses: appleboy/ssh-action@v1.0.3
@@ -155,15 +161,43 @@ jobs:
           TARGET_DIR="${{ steps.release.outputs.live_dir }}"
           RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
           RELEASE_DIR="${{ steps.release.outputs.release_dir }}"
+          SHARED_ASSETS_DIR="${{ steps.release.outputs.shared_assets_dir }}"
+          SHARED_IMG_DIR="${{ steps.release.outputs.shared_img_dir }}"
 
           mkdir -p "$RELEASES_DIR"
+          mkdir -p "$SHARED_ASSETS_DIR"
+          mkdir -p "$SHARED_IMG_DIR"
           if [ -d "$TARGET_DIR" ] && [ ! -L "$TARGET_DIR" ]; then
             LEGACY_DIR="$RELEASES_DIR/legacy-initial-$(date +%Y%m%d%H%M%S)"
             mv "$TARGET_DIR" "$LEGACY_DIR"
             ln -s "$LEGACY_DIR" "$TARGET_DIR"
           fi
+          CURRENT_TARGET=""
           if [ -L "$TARGET_DIR" ]; then
-            readlink -f "$TARGET_DIR" > "$RELEASES_DIR/.previous_target"
+            CURRENT_TARGET="$(readlink -f "$TARGET_DIR")"
+            printf '%s' "$CURRENT_TARGET" > "$RELEASES_DIR/.previous_target"
+          fi
+          SOURCE_IMG_DIR=""
+          if [ -n "$CURRENT_TARGET" ] && [ -e "$CURRENT_TARGET/assets/img" ]; then
+            CURRENT_IMG_DIR="$(readlink -f "$CURRENT_TARGET/assets/img")"
+            if [ "$CURRENT_IMG_DIR" != "$SHARED_IMG_DIR" ] && [ -d "$CURRENT_IMG_DIR" ]; then
+              SOURCE_IMG_DIR="$CURRENT_IMG_DIR"
+            fi
+          fi
+          if [ -z "$SOURCE_IMG_DIR" ]; then
+            for CANDIDATE in "$RELEASES_DIR"/legacy-initial-* "$RELEASES_DIR"/*; do
+              if [ ! -e "$CANDIDATE" ] || [ "$CANDIDATE" = "$RELEASE_DIR" ] || [ ! -e "$CANDIDATE/assets/img" ]; then
+                continue
+              fi
+              CANDIDATE_IMG_DIR="$(readlink -f "$CANDIDATE/assets/img")"
+              if [ "$CANDIDATE_IMG_DIR" != "$SHARED_IMG_DIR" ] && [ -d "$CANDIDATE_IMG_DIR" ]; then
+                SOURCE_IMG_DIR="$CANDIDATE_IMG_DIR"
+                break
+              fi
+            done
+          fi
+          if [ -n "$SOURCE_IMG_DIR" ]; then
+            cp -an "$SOURCE_IMG_DIR/." "$SHARED_IMG_DIR/"
           fi
           rm -rf "$RELEASE_DIR"
           mkdir -p "$RELEASE_DIR"
@@ -174,7 +208,7 @@ jobs:
         host: ${{ secrets.PRD_SFTP_SERVER }}
         username: ${{ secrets.PRD_SFTP_USER }}
         key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
-        source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md, !assets/img"
+        source: "./, !.editorconfig, !.env-sample, !.gitignore, !README.md"
         target: ${{ steps.release.outputs.release_dir }}
         timeout: 300s
         command_timeout: 10m
@@ -192,9 +226,17 @@ jobs:
           TARGET_DIR="${{ steps.release.outputs.live_dir }}"
           RELEASES_DIR="${{ steps.release.outputs.releases_dir }}"
           RELEASE_DIR="${{ steps.release.outputs.release_dir }}"
+          SHARED_IMG_DIR="${{ steps.release.outputs.shared_img_dir }}"
           if [ -L "$TARGET_DIR" ]; then
             readlink -f "$TARGET_DIR" > "$RELEASES_DIR/.previous_target"
           fi
+          mkdir -p "$SHARED_IMG_DIR"
+          mkdir -p "$RELEASE_DIR/assets"
+          if [ -d "$RELEASE_DIR/assets/img" ]; then
+            cp -af "$RELEASE_DIR/assets/img/." "$SHARED_IMG_DIR/"
+            rm -rf "$RELEASE_DIR/assets/img"
+          fi
+          ln -sfn "$SHARED_IMG_DIR" "$RELEASE_DIR/assets/img"
           ln -sfn "$RELEASE_DIR" "${TARGET_DIR}.next"
           mv -Tf "${TARGET_DIR}.next" "$TARGET_DIR"
           echo "✅ Release promoted: $RELEASE_DIR"
