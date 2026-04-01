@@ -241,6 +241,60 @@ jobs:
           mv -Tf "${TARGET_DIR}.next" "$TARGET_DIR"
           echo "✅ Release promoted: $RELEASE_DIR"
 
+    - name: Write deploy metadata
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 60s
+        command_timeout: 1m
+        script: |
+          cat > "${{ steps.release.outputs.release_dir }}/_deploy_meta.json" <<EOF
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "sha": "${{ github.sha }}",
+            "short_sha": "$(echo '${{ github.sha }}' | cut -c1-7)",
+            "ref": "${{ github.ref_name }}",
+            "actor": "${{ github.actor }}",
+            "deployed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+
+    - name: Invalidate OPcache and realpath cache
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PRD_SFTP_SERVER }}
+        username: ${{ secrets.PRD_SFTP_USER }}
+        key: ${{ secrets.PRD_SFTP_SSH_PRIVATE_KEY }}
+        timeout: 60s
+        command_timeout: 2m
+        script: |
+          set -eu
+          RELEASE_DIR="${{ steps.release.outputs.release_dir }}"
+          RESET_FILE="$RELEASE_DIR/_opcache_reset_${{ github.run_id }}.php"
+
+          cat > "$RESET_FILE" <<'EOPHP'
+          <?php
+          if (function_exists('opcache_reset')) { opcache_reset(); }
+          clearstatcache(true);
+          header('Content-Type: text/plain');
+          echo 'OK';
+          EOPHP
+
+          for i in 1 2 3 4 5; do
+            curl --silent --max-time 5 \
+              -H "Host: portfolio.trinopagamentos.com" \
+              -H "X-Forwarded-For: 52.72.228.239" \
+              "http://127.0.0.1/_opcache_reset_${{ github.run_id }}.php" || true
+            sleep 0.2
+          done
+
+          rm -f "$RESET_FILE"
+          echo "✅ OPcache and realpath cache invalidated"
+
     - name: Post-deploy smoke check
       id: healthcheck
       if: always()

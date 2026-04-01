@@ -754,6 +754,15 @@ if ($itemsJson === false) {
                 </div>
             </div>
         </div>
+        <?php
+        $_dMeta = @json_decode(@file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/_deploy_meta.json'), true);
+        if ($_dMeta): ?>
+        <p class="text-center" style="margin-top:0.5rem;"><a href="<?= htmlspecialchars($_dMeta['run_url'] ?? '#') ?>" target="_blank" rel="noopener"
+           style="font-size:9px;color:rgba(255,255,255,0.2);text-decoration:none;letter-spacing:0.3px;"
+           title="Deploy em <?= htmlspecialchars($_dMeta['deployed_at'] ?? '') ?> por <?= htmlspecialchars($_dMeta['actor'] ?? '') ?>">
+            <?= htmlspecialchars($_dMeta['short_sha'] ?? '') ?> · #<?= htmlspecialchars($_dMeta['run_id'] ?? '') ?>
+        </a></p>
+        <?php endif; ?>
     </footer>
 
     <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
