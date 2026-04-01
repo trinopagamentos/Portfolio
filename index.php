@@ -755,7 +755,11 @@ if ($itemsJson === false) {
             </div>
         </div>
         <?php
-        $_dMeta = @json_decode(@file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/_deploy_meta.json'), true);
+        $_deployMetaPath = __DIR__ . '/_deploy_meta.json';
+        $_dMetaRaw = (is_file($_deployMetaPath) && is_readable($_deployMetaPath))
+            ? file_get_contents($_deployMetaPath)
+            : false;
+        $_dMeta = is_string($_dMetaRaw) ? json_decode($_dMetaRaw, true) : null;
         if ($_dMeta): ?>
         <p class="text-center" style="margin-top:0.5rem;"><a href="<?= htmlspecialchars($_dMeta['run_url'] ?? '#') ?>" target="_blank" rel="noopener"
            style="font-size:9px;color:rgba(255,255,255,0.2);text-decoration:none;letter-spacing:0.3px;"
