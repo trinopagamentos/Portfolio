@@ -197,7 +197,7 @@ jobs:
             done
           fi
           if [ -n "$SOURCE_IMG_DIR" ]; then
-            cp -an "$SOURCE_IMG_DIR/." "$SHARED_IMG_DIR/"
+            cp -R --update=none "$SOURCE_IMG_DIR/." "$SHARED_IMG_DIR/"
           fi
           rm -rf "$RELEASE_DIR"
           mkdir -p "$RELEASE_DIR"
@@ -233,7 +233,7 @@ jobs:
           mkdir -p "$SHARED_IMG_DIR"
           mkdir -p "$RELEASE_DIR/assets"
           if [ -d "$RELEASE_DIR/assets/img" ]; then
-            cp -af "$RELEASE_DIR/assets/img/." "$SHARED_IMG_DIR/"
+            cp -Rf "$RELEASE_DIR/assets/img/." "$SHARED_IMG_DIR/"
             rm -rf "$RELEASE_DIR/assets/img"
           fi
           ln -sfn "$SHARED_IMG_DIR" "$RELEASE_DIR/assets/img"
