@@ -748,7 +748,7 @@ if ($itemsJson === false) {
                 <div class="col-12 col-lg-4">
                     <p class="text-center text-lg-end">
                         <a href="https://maps.app.goo.gl/wChDt9AM9YCN7G2Y6" title="Veja como chegar na Trino Pagamentos" target="_blank">R.
-                            Gomes de Carvalho, 1666 - 3º e 5º andar<br />Vila Olímpia, São Paulo -
+                            Gomes de Carvalho, 1356 - 7º andar<br />Vila Olímpia, São Paulo -
                             SP, 04547-006</a>
                     </p>
                 </div>
